@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
+  <title>Product Information</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f0f0;
+    }
+    .container {
+      max-width: 500px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    .loader {
+      border: 16px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 16px solid #007bff;
+      width: 120px;
+      height: 120px;
+      animation: spin 2s linear infinite;
+      margin: 50px auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .message {
+      font-size: 20px;
+      color: green;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container" id="container">
+  <div class="loader" id="loader"></div>
+  <div class="message" id="message" style="display:none;">Data Saved Successfully</div>
+</div>
+
+<!-- Firebase Configuration and Initialization -->
+<script>
+  const url = new URL(window.location.href);
+  const queryParams = new URLSearchParams(url.search);
+  const supplierId = queryParams.get('supp_id');
+  const requestId = queryParams.get('req_id');
+  const brand = queryParams.get('brand');
+  const product = queryParams.get('product');
+  const productCode = queryParams.get('product_code');
+  const status = queryParams.get('status');
+  const warranty= queryParams.get('warranty');
+  const term = queryParams.get('term');
+  const price = queryParams.get('price');
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyBlcn_SJcXY8Dh2hpgfAzUrcD9ShQfZ5Ts",
+    authDomain: "quickmro.firebaseapp.com",
+    projectId: "quickmro",
+    storageBucket: "quickmro.appspot.com",
+    messagingSenderId: "851884870059",
+    appId: "1:851884870059:web:e45530dedda5cf5ddd6aee",
+    measurementId: "G-K08BV1Z7KY"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  async function getDataById() {
+    try {
+    
+        const data = {
+          productName: product,
+          productCode: productCode,
+          brandName:brand,
+          status: status, // You can change this value as needed
+          warranty: warranty, // You can change this value as needed
+          term: term, // You can change this value as needed
+          price: price, // You can change this value as needed
+          requestId: requestId,
+          supplierId: supplierId,
+          isAccepted: false,
+        };
+
+        // Add data to Firestore
+        await db.collection('suppliers_reply').add(data);
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('message').style.display = 'block';
+    
+    } catch (error) {
+      console.error("Error getting document:", error);
+    }
+  }
+
+  // Fetch data and save to Firestore
+  getDataById();
+</script>
+
+</body>
+</html>
