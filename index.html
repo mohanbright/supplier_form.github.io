@@ -91,6 +91,7 @@
       if (supplierDoc.exists) {
         // Get current date and time
         const currentDate = new Date();
+        const formattedDate = currentDate.toISOString();
         const data = {
           productName: product,
           productCode: productCode,
@@ -105,7 +106,7 @@
           supplier_address: supplier_address,
           supplier_email: supplierDoc.data().email, // Extract email from supplier document
           supplier_name: supplierDoc.data().name, // Extract name from supplier document
-          date: currentDate // Add current date and time
+          date: formattedDate // Add current date and time
         };
 
         // Add data to Firestore
