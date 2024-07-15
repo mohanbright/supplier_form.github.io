@@ -89,6 +89,8 @@
 
       // Check if document exists
       if (supplierDoc.exists) {
+        // Get current date and time
+        const currentDate = new Date();
         const data = {
           productName: product,
           productCode: productCode,
@@ -102,7 +104,8 @@
           isAccepted: false,
           supplier_address: supplier_address,
           supplier_email: supplierDoc.data().email, // Extract email from supplier document
-          supplier_name: supplierDoc.data().name // Extract name from supplier document
+          supplier_name: supplierDoc.data().name, // Extract name from supplier document
+          date: currentDate // Add current date and time
         };
 
         // Add data to Firestore
