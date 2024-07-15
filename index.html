@@ -65,6 +65,7 @@
   const warranty= queryParams.get('warranty');
   const term = queryParams.get('term');
   const price = queryParams.get('price');
+  const supplier_address = queryParams.get('supplier_address');
 
   // Your web app's Firebase configuration
   const firebaseConfig = {
@@ -83,25 +84,34 @@
 
   async function getDataById() {
     try {
-    
+      // Fetch supplier document from Firestore
+      const supplierDoc = await db.collection('suppliers').doc(supplierId).get();
+
+      // Check if document exists
+      if (supplierDoc.exists) {
         const data = {
           productName: product,
           productCode: productCode,
-          brandName:brand,
-          status: status, // You can change this value as needed
-          warranty: warranty, // You can change this value as needed
-          term: term, // You can change this value as needed
-          price: price, // You can change this value as needed
+          brandName: brand,
+          status: status,
+          warranty: warranty,
+          term: term,
+          price: price,
           requestId: requestId,
           supplierId: supplierId,
           isAccepted: false,
+          supplier_address: supplier_address,
+          supplier_email: supplierDoc.data().email, // Extract email from supplier document
+          supplier_name: supplierDoc.data().name // Extract name from supplier document
         };
 
         // Add data to Firestore
         await db.collection('suppliers_reply').add(data);
         document.getElementById('loader').style.display = 'none';
         document.getElementById('message').style.display = 'block';
-    
+      } else {
+        console.log('Supplier document not found');
+      }
     } catch (error) {
       console.error("Error getting document:", error);
     }
