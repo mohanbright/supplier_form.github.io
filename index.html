@@ -65,7 +65,7 @@
   const warranty= queryParams.get('warranty');
   const term = queryParams.get('term');
   const price = queryParams.get('price');
-  const supplier_address = queryParams.get('supplier_address');
+  // const supplier_address = queryParams.get('supplier_address');
 
   // Your web app's Firebase configuration
   const firebaseConfig = {
@@ -103,7 +103,7 @@
           requestId: requestId,
           supplierId: supplierId,
           isAccepted: false,
-          supplier_address: supplier_address,
+          supplier_country: supplierDoc.data().country,
           supplier_email: supplierDoc.data().email, // Extract email from supplier document
           supplier_name: supplierDoc.data().name, // Extract name from supplier document
           date: formattedDate // Add current date and time
