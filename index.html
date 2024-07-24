@@ -43,14 +43,58 @@
       color: green;
       margin-top: 20px;
     }
+
+
+        .data {
+            color: #27ae60; /* Green color for success message */
+            font-size: 16px;
+            font-weight: bold;
+        }
+    
   </style>
 </head>
 <body>
 
-<div class="container" id="container">
-  <div class="loader" id="loader"></div>
-  <div class="message" id="message" style="display:none;">Data Saved Successfully</div>
-</div>
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class="container" id="container">
+        <div class="loader" id="loader"></div>
+        <div class="data" id="data" style="display:none;">Data Saved Successfully</div>
+    </div>
+
+    <script>
+        setTimeout(() => {
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('data').style.display = 'block';
+        }, 2000);
+    </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
 
 <!-- Firebase Configuration and Initialization -->
 <script>
