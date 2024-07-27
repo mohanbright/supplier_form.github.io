@@ -176,7 +176,7 @@
             price: queryParams.get('price'),
             requestId: queryParams.get('req_id'),
             supplierId: queryParams.get('supp_id'),
-            isAccepted: false,
+            isAccepted: queryParams.get('isAccepted') === 'true',
             supplier_country: supplierDoc.data().country,
             supplier_email: supplierDoc.data().email,
             supplier_name: supplierDoc.data().name,
