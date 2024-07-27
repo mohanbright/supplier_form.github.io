@@ -44,6 +44,14 @@
       color: green;
       margin-top: 20px;
     }
+    .error {
+      font-size: 20px;
+      color: red;
+      margin-top: 20px;
+    }
+    .data, .error {
+      display: none;
+    }
     .data {
       color: #27ae60;
       font-size: 16px;
@@ -70,8 +78,8 @@
 <body>
   <div class="container" id="container">
     <div class="loader" id="loader"></div>
-    <div class="data" id="data" style="display:none;">Your request was sent successfully!</div>
-    <div class="message" id="message" style="display:none;">Error sending request.</div>
+    <div class="data" id="data">Your request was sent successfully!</div>
+    <div class="error" id="error">Error sending request or response already added.</div>
     <form id="dataForm">
       <div class="form-group">
         <label for="product">Product Name</label>
@@ -161,6 +169,19 @@
       const requestId = urlParams.get('req_id');
 
       try {
+        // Check if response already exists
+        const existingResponse = await db.collection('suppliers_reply')
+          .where('requestId', '==', requestId)
+          .where('supplierId', '==', supplierId)
+          .get();
+
+        if (!existingResponse.empty) {
+          document.getElementById('loader').style.display = 'none';
+          document.getElementById('error').textContent = 'Response already added.';
+          document.getElementById('error').style.display = 'block';
+          return;
+        }
+
         // Fetch supplier document from Firestore
         const supplierDoc = await db.collection('suppliers').doc(supplierId).get();
 
@@ -195,7 +216,9 @@
         }
       } catch (error) {
         console.error("Error getting document:", error);
-        document.getElementById('message').style.display = 'block';
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('error').textContent = 'Error sending request.';
+        document.getElementById('error').style.display = 'block';
       }
     });
   </script>
