@@ -60,116 +60,135 @@
       padding: 8px;
       margin-bottom: 10px;
     }
+    .form-group input[readonly] {
+      background-color: #e9ecef;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 <body>
-    <div class="container" id="container">
-        <div class="loader" id="loader"></div>
-        <div class="data" id="data" style="display:none;">Your request was sent successfully!</div>
-        <div class="message" id="message" style="display:none;">Error sending request.</div>
-        <form id="dataForm">
-          <div class="form-group">
-            <label for="product">Product Name</label>
-            <input type="text" id="product" name="product" required>
-          </div>
-          <div class="form-group">
-            <label for="product_code">Product Code</label>
-            <input type="text" id="product_code" name="product_code" required>
-          </div>
-          <div class="form-group">
-            <label for="brand">Brand</label>
-            <input type="text" id="brand" name="brand" required>
-          </div>
-          <div class="form-group">
-            <label for="status">Status</label>
-            <input type="text" id="status" name="status" required>
-          </div>
-          <div class="form-group">
-            <label for="warranty">Warranty</label>
-            <input type="text" id="warranty" name="warranty" required>
-          </div>
-          <div class="form-group">
-            <label for="term">Term</label>
-            <input type="text" id="term" name="term" required>
-          </div>
-          <div class="form-group">
-            <label for="price">Price</label>
-            <input type="text" id="price" name="price" required>
-          </div>
-          <input type="submit" value="Submit">
-        </form>
-    </div>
+  <div class="container" id="container">
+    <div class="loader" id="loader" style="display:none;"></div>
+    <div class="data" id="data" style="display:none;">Your request was sent successfully!</div>
+    <div class="message" id="message" style="display:none;">Error sending request.</div>
+    <form id="dataForm">
+      <div class="form-group">
+        <label for="product">Product Name</label>
+        <input type="text" id="product" name="product" readonly>
+      </div>
+      <div class="form-group">
+        <label for="product_code">Product Code</label>
+        <input type="text" id="product_code" name="product_code" readonly>
+      </div>
+      <div class="form-group">
+        <label for="brand">Brand</label>
+        <input type="text" id="brand" name="brand" required>
+      </div>
+      <div class="form-group">
+        <label for="status">Status</label>
+        <input type="text" id="status" name="status" required>
+      </div>
+      <div class="form-group">
+        <label for="warranty">Warranty</label>
+        <input type="text" id="warranty" name="warranty" required>
+      </div>
+      <div class="form-group">
+        <label for="term">Term</label>
+        <input type="text" id="term" name="term" required>
+      </div>
+      <div class="form-group">
+        <label for="price">Price</label>
+        <input type="text" id="price" name="price" required>
+      </div>
+      <input type="submit" value="Submit">
+    </form>
+  </div>
 
-    <script>
-        // Firebase Configuration and Initialization
-        const firebaseConfig = {
-          apiKey: "AIzaSyBlcn_SJcXY8Dh2hpgfAzUrcD9ShQfZ5Ts",
-          authDomain: "quickmro.firebaseapp.com",
-          projectId: "quickmro",
-          storageBucket: "quickmro.appspot.com",
-          messagingSenderId: "851884870059",
-          appId: "1:851884870059:web:e45530dedda5cf5ddd6aee",
-          measurementId: "G-K08BV1Z7KY"
-        };
+  <script>
+    // Firebase Configuration and Initialization
+    const firebaseConfig = {
+      apiKey: "AIzaSyBlcn_SJcXY8Dh2hpgfAzUrcD9ShQfZ5Ts",
+      authDomain: "quickmro.firebaseapp.com",
+      projectId: "quickmro",
+      storageBucket: "quickmro.appspot.com",
+      messagingSenderId: "851884870059",
+      appId: "1:851884870059:web:e45530dedda5cf5ddd6aee",
+      measurementId: "G-K08BV1Z7KY"
+    };
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-        document.getElementById('dataForm').addEventListener('submit', async (event) => {
-          event.preventDefault();
-          
-          const product = document.getElementById('product').value;
-          const productCode = document.getElementById('product_code').value;
-          const brand = document.getElementById('brand').value;
-          const status = document.getElementById('status').value;
-          const warranty = document.getElementById('warranty').value;
-          const term = document.getElementById('term').value;
-          const price = document.getElementById('price').value;
-          
-          const url = new URL(window.location.href);
-          const queryParams = new URLSearchParams(url.search);
-          const supplierId = queryParams.get('supp_id');
-          const requestId = queryParams.get('req_id');
+    // Function to populate form fields based on URL parameters
+    function populateForm() {
+      const urlParams = new URLSearchParams(window.location.search);
+      document.getElementById('product').value = urlParams.get('product') || '';
+      document.getElementById('product_code').value = urlParams.get('product_code') || '';
+      document.getElementById('brand').value = urlParams.get('brand') || '';
+      document.getElementById('status').value = urlParams.get('status') || '';
+      document.getElementById('warranty').value = urlParams.get('warranty') || '';
+      document.getElementById('term').value = urlParams.get('term') || '';
+      document.getElementById('price').value = urlParams.get('price') || '';
+    }
 
-          try {
-            // Fetch supplier document from Firestore
-            const supplierDoc = await db.collection('suppliers').doc(supplierId).get();
+    // Call populateForm when the script loads
+    populateForm();
 
-            if (supplierDoc.exists) {
-              // Get current date and time
-              const currentDate = new Date();
-              const formattedDate = currentDate.toISOString();
-              const data = {
-                productName: product,
-                productCode: productCode,
-                brandName: brand,
-                status: status,
-                warranty: warranty,
-                term: term,
-                price: price,
-                requestId: requestId,
-                supplierId: supplierId,
-                isAccepted: false,
-                supplier_country: supplierDoc.data().country,
-                supplier_email: supplierDoc.data().email,
-                supplier_name: supplierDoc.data().name,
-                date: formattedDate
-              };
+    // Handle form submission
+    document.getElementById('dataForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      
+      const product = document.getElementById('product').value;
+      const productCode = document.getElementById('product_code').value;
+      const brand = document.getElementById('brand').value;
+      const status = document.getElementById('status').value;
+      const warranty = document.getElementById('warranty').value;
+      const term = document.getElementById('term').value;
+      const price = document.getElementById('price').value;
+      
+      const urlParams = new URLSearchParams(window.location.search);
+      const supplierId = urlParams.get('supp_id');
+      const requestId = urlParams.get('req_id');
+      
+      try {
+        // Fetch supplier document from Firestore
+        const supplierDoc = await db.collection('suppliers').doc(supplierId).get();
 
-              // Add data to Firestore
-              await db.collection('suppliers_reply').add(data);
-              document.getElementById('loader').style.display = 'none';
-              document.getElementById('data').style.display = 'block';
-            } else {
-              console.log('Supplier document not found');
-              document.getElementById('message').style.display = 'block';
-            }
-          } catch (error) {
-            console.error("Error getting document:", error);
-            document.getElementById('message').style.display = 'block';
-          }
-        });
-    </script>
+        if (supplierDoc.exists) {
+          // Get current date and time
+          const currentDate = new Date();
+          const formattedDate = currentDate.toISOString();
+          const data = {
+            productName: product,
+            productCode: productCode,
+            brandName: brand,
+            status: status,
+            warranty: warranty,
+            term: term,
+            price: price,
+            requestId: requestId,
+            supplierId: supplierId,
+            isAccepted: false,
+            supplier_country: supplierDoc.data().country,
+            supplier_email: supplierDoc.data().email,
+            supplier_name: supplierDoc.data().name,
+            date: formattedDate
+          };
+
+          // Add data to Firestore
+          await db.collection('suppliers_reply').add(data);
+          document.getElementById('loader').style.display = 'none';
+          document.getElementById('data').style.display = 'block';
+        } else {
+          console.log('Supplier document not found');
+          document.getElementById('message').style.display = 'block';
+        }
+      } catch (error) {
+        console.error("Error getting document:", error);
+        document.getElementById('message').style.display = 'block';
+      }
+    });
+  </script>
 </body>
 </html>
