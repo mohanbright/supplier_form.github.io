@@ -224,13 +224,20 @@
         if (!existingResponse.empty) {
           // Update existing response
           await db.collection('suppliers_reply').doc(existingResponse.docs[0].id).update({
-            product: product,
+             productName: product,
             productCode: productCode,
-            brand: brand,
+            brandName: brand,
             status: status,
             warranty: warranty,
             term: term,
-            price: price
+            price: price,
+            requestId: requestId,
+            supplierId: supplierId,
+            isAccepted: false,
+            supplier_country: supplierDoc.data().country,
+            supplier_email: supplierDoc.data().email,
+            supplier_name: supplierDoc.data().name,
+            date: formattedDate
           });
         } else {
           // Add new response
