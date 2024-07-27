@@ -124,17 +124,17 @@
     // Function to populate form fields based on URL parameters
     function populateForm() {
       const urlParams = new URLSearchParams(window.location.search);
-      document.getElementById('product').value = urlParams.get('product') || '';
-      document.getElementById('product_code').value = urlParams.get('product_code') || '';
-      document.getElementById('brand').value = urlParams.get('brand') || '';
-      document.getElementById('status').value = urlParams.get('status') || '';
-      document.getElementById('warranty').value = urlParams.get('warranty') || '';
-      document.getElementById('term').value = urlParams.get('term') || '';
-      document.getElementById('price').value = urlParams.get('price') || '';
+      const product = urlParams.get('product') || '';
+      const productCode = urlParams.get('product_code') || '';
+
+      document.getElementById('product').value = product;
+      document.getElementById('product_code').value = productCode;
+
+      // Optionally, you can pre-fill other fields if needed
     }
 
     // Call populateForm when the script loads
-    populateForm();
+    window.onload = populateForm;
 
     // Handle form submission
     document.getElementById('dataForm').addEventListener('submit', async (event) => {
