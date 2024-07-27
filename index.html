@@ -55,11 +55,14 @@
       font-size: 14px;
       margin-bottom: 5px;
     }
-    input[type="text"] {
+    input[type="text"], input[type="date"], input[type="email"], input[type="number"], input[type="text"] {
       width: 100%;
       padding: 10px;
       border: 1px solid #ccc;
       border-radius: 5px;
+    }
+    input[readonly] {
+      background-color: #f0f0f0;
     }
     button {
       padding: 10px 20px;
@@ -78,12 +81,24 @@
     <div class="data" id="data" style="display:none;">
       <form id="offerForm">
         <div class="form-group">
+          <label for="brandName">Brand Name</label>
+          <input type="text" id="brandName" name="brandName" readonly>
+        </div>
+        <div class="form-group">
+          <label for="date">Date</label>
+          <input type="text" id="date" name="date" readonly>
+        </div>
+        <div class="form-group">
           <label for="product">Product</label>
           <input type="text" id="product" name="product" readonly>
         </div>
         <div class="form-group">
           <label for="productCode">Product Code</label>
           <input type="text" id="productCode" name="productCode" readonly>
+        </div>
+        <div class="form-group">
+          <label for="status">Status</label>
+          <input type="text" id="status" name="status" readonly>
         </div>
         <div class="form-group">
           <label for="warranty">Warranty</label>
@@ -95,7 +110,31 @@
         </div>
         <div class="form-group">
           <label for="price">Price</label>
-          <input type="text" id="price" name="price" required>
+          <input type="number" id="price" name="price" required>
+        </div>
+        <div class="form-group">
+          <label for="totalPrice">Total Price</label>
+          <input type="number" id="totalPrice" name="totalPrice" required>
+        </div>
+        <div class="form-group">
+          <label for="supplier_name">Supplier Name</label>
+          <input type="text" id="supplier_name" name="supplier_name" readonly>
+        </div>
+        <div class="form-group">
+          <label for="supplier_email">Supplier Email</label>
+          <input type="email" id="supplier_email" name="supplier_email" readonly>
+        </div>
+        <div class="form-group">
+          <label for="supplier_country">Supplier Country</label>
+          <input type="text" id="supplier_country" name="supplier_country" readonly>
+        </div>
+        <div class="form-group">
+          <label for="isAccepted">Is Accepted</label>
+          <input type="text" id="isAccepted" name="isAccepted" readonly>
+        </div>
+        <div class="form-group">
+          <label for="isNew">Is New</label>
+          <input type="text" id="isNew" name="isNew" readonly>
         </div>
         <button type="submit">Submit</button>
       </form>
@@ -110,8 +149,20 @@
 
     const url = new URL(window.location.href);
     const queryParams = new URLSearchParams(url.search);
+    document.getElementById('brandName').value = queryParams.get('brandName');
+    document.getElementById('date').value = new Date(queryParams.get('date')).toLocaleDateString();
     document.getElementById('product').value = queryParams.get('product');
-    document.getElementById('productCode').value = queryParams.get('product_code');
+    document.getElementById('productCode').value = queryParams.get('productCode');
+    document.getElementById('status').value = queryParams.get('status');
+    document.getElementById('warranty').value = queryParams.get('warranty');
+    document.getElementById('term').value = queryParams.get('term');
+    document.getElementById('price').value = queryParams.get('price');
+    document.getElementById('totalPrice').value = queryParams.get('totalPrice');
+    document.getElementById('supplier_name').value = queryParams.get('supplier_name');
+    document.getElementById('supplier_email').value = queryParams.get('supplier_email');
+    document.getElementById('supplier_country').value = queryParams.get('supplier_country');
+    document.getElementById('isAccepted').value = queryParams.get('isAccepted');
+    document.getElementById('isNew').value = queryParams.get('isNew');
 
     document.getElementById('offerForm').addEventListener('submit', function(event) {
       event.preventDefault();
