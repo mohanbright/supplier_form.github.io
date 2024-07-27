@@ -39,23 +39,20 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-    .message {
+    .message, .error {
       font-size: 20px;
-      color: green;
       margin-top: 20px;
-    }
-    .error {
-      font-size: 20px;
-      color: red;
-      margin-top: 20px;
-    }
-    .data, .error {
-      display: none;
     }
     .data {
       color: #27ae60;
       font-size: 16px;
       font-weight: bold;
+    }
+    .error {
+      color: red;
+    }
+    .data, .error {
+      display: none;
     }
     .form-group {
       margin: 15px 0;
@@ -68,6 +65,10 @@
       width: 100%;
       padding: 8px;
       margin-bottom: 10px;
+      font-size: 16px;
+    }
+    .form-group select {
+      height: 40px; /* Increase height to match text fields */
     }
     .form-group input[readonly] {
       background-color: #e9ecef;
@@ -79,7 +80,7 @@
   <div class="container" id="container">
     <div class="loader" id="loader"></div>
     <div class="data" id="data">Your request was sent successfully!</div>
-    <div class="error" id="error">Error sending request or response already added.</div>
+    <div class="error" id="error">You have already sent the request or an error occurred.</div>
     <form id="dataForm">
       <div class="form-group">
         <label for="product">Product Name</label>
@@ -177,7 +178,7 @@
 
         if (!existingResponse.empty) {
           document.getElementById('loader').style.display = 'none';
-          document.getElementById('error').textContent = 'Response already added.';
+          document.getElementById('error').textContent = 'You have already sent the request.';
           document.getElementById('error').style.display = 'block';
           return;
         }
@@ -212,7 +213,8 @@
           document.getElementById('data').style.display = 'block';
         } else {
           console.log('Supplier document not found');
-          document.getElementById('message').style.display = 'block';
+          document.getElementById('error').textContent = 'Error: Supplier document not found.';
+          document.getElementById('error').style.display = 'block';
         }
       } catch (error) {
         console.error("Error getting document:", error);
