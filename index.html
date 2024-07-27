@@ -87,14 +87,19 @@
       </div>
       <div class="form-group">
         <label for="status">Status</label>
-        <input type="text" id="status" name="status" required>
+        <select id="status" name="status" required>
+          <option value="">Select status</option>
+          <option value="Refurbished">Refurbished</option>
+          <option value="New">New</option>
+          <option value="Used">Used</option>
+        </select>
       </div>
       <div class="form-group">
         <label for="warranty">Warranty</label>
         <input type="text" id="warranty" name="warranty" required>
       </div>
       <div class="form-group">
-        <label for="term">Term</label>
+        <label for="term">Delivery</label>
         <input type="text" id="term" name="term" required>
       </div>
       <div class="form-group">
@@ -142,7 +147,7 @@
 
       // Show loader
       document.getElementById('loader').style.display = 'block';
-      
+
       const product = document.getElementById('product').value;
       const productCode = document.getElementById('product_code').value;
       const brand = document.getElementById('brand').value;
@@ -150,11 +155,11 @@
       const warranty = document.getElementById('warranty').value;
       const term = document.getElementById('term').value;
       const price = document.getElementById('price').value;
-      
+
       const urlParams = new URLSearchParams(window.location.search);
       const supplierId = urlParams.get('supp_id');
       const requestId = urlParams.get('req_id');
-      
+
       try {
         // Fetch supplier document from Firestore
         const supplierDoc = await db.collection('suppliers').doc(supplierId).get();
