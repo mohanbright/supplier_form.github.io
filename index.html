@@ -43,100 +43,88 @@
       color: green;
       margin-top: 20px;
     }
-
-
-        .data {
-            color: #27ae60; 
-            font-size: 16px;
-            font-weight: bold;
-        }
-    
+    .data {
+      color: #27ae60;
+      font-size: 16px;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
-    <div class="container" id="container">
-        <div class="loader" id="loader"></div>
-        <div class="data" id="data" style="display:none;">Your request sent Successfully!</div>
-    </div>
+  <div class="container" id="container">
+    <div class="loader" id="loader"></div>
+    <div class="data" id="data" style="display:none;">Your request sent successfully!</div>
+  </div>
 
-    <script>
-        setTimeout(() => {
-            document.getElementById('loader').style.display = 'none';
-            document.getElementById('data').style.display = 'block';
-        }, 2000);
-    </script>
-<!-- Firebase Configuration and Initialization -->
-<script>
-  const url = new URL(window.location.href);
-  const queryParams = new URLSearchParams(url.search);
-  const supplierId = queryParams.get('supp_id');
-  const requestId = queryParams.get('req_id');
-  const brand = queryParams.get('brand');
-  const product = queryParams.get('product');
-  const productCode = queryParams.get('product_code');
-  const status = queryParams.get('status');
-  const warranty= queryParams.get('warranty');
-  const term = queryParams.get('term');
-  const price = queryParams.get('price');
-  // const supplier_address = queryParams.get('supplier_address');
+  <script>
+    setTimeout(() => {
+      document.getElementById('loader').style.display = 'none';
+      document.getElementById('data').style.display = 'block';
+    }, 2000);
+  </script>
 
-  // Your web app's Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyBlcn_SJcXY8Dh2hpgfAzUrcD9ShQfZ5Ts",
-    authDomain: "quickmro.firebaseapp.com",
-    projectId: "quickmro",
-    storageBucket: "quickmro.appspot.com",
-    messagingSenderId: "851884870059",
-    appId: "1:851884870059:web:e45530dedda5cf5ddd6aee",
-    measurementId: "G-K08BV1Z7KY"
-  };
+  <!-- Firebase Configuration and Initialization -->
+  <script>
+    const url = new URL(window.location.href);
+    const queryParams = new URLSearchParams(url.search);
+    const supplierId = queryParams.get('supp_id');
+    const requestId = queryParams.get('req_id');
+    const brand = queryParams.get('brand');
+    const product = queryParams.get('product');
+    const productCode = queryParams.get('product_code');
+    const status = queryParams.get('status');
+    const warranty = queryParams.get('warranty');
+    const term = queryParams.get('term');
+    const price = queryParams.get('price');
 
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+    const firebaseConfig = {
+      apiKey: "AIzaSyBlcn_SJcXY8Dh2hpgfAzUrcD9ShQfZ5Ts",
+      authDomain: "quickmro.firebaseapp.com",
+      projectId: "quickmro",
+      storageBucket: "quickmro.appspot.com",
+      messagingSenderId: "851884870059",
+      appId: "1:851884870059:web:e45530dedda5cf5ddd6aee",
+      measurementId: "G-K08BV1Z7KY"
+    };
 
-  async function getDataById() {
-    try {
-      // Fetch supplier document from Firestore
-      const supplierDoc = await db.collection('suppliers').doc(supplierId).get();
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-      // Check if document exists
-      if (supplierDoc.exists) {
-        // Get current date and time
-        const currentDate = new Date();
-        const formattedDate = currentDate.toISOString();
-        const data = {
-          productName: product,
-          productCode: productCode,
-          brandName: brand,
-          status: status,
-          warranty: warranty,
-          term: term,
-          price: price,
-          requestId: requestId,
-          supplierId: supplierId,
-          isAccepted: false,
-          supplier_country: supplierDoc.data().country,
-          supplier_email: supplierDoc.data().email, // Extract email from supplier document
-          supplier_name: supplierDoc.data().name, // Extract name from supplier document
-          date: formattedDate // Add current date and time
-        };
-
-        // Add data to Firestore
-        await db.collection('suppliers_reply').add(data);
-        document.getElementById('loader').style.display = 'none';
-        document.getElementById('message').style.display = 'block';
-      } else {
-        console.log('Supplier document not found');
+    async function getDataById() {
+      try {
+        const supplierDoc = await db.collection('suppliers').doc(supplierId).get();
+        if (supplierDoc.exists) {
+          const supplierData = supplierDoc.data();
+          console.log('Supplier Data:', supplierData);
+          return supplierData;
+        } else {
+          console.log('No supplier data found!');
+        }
+      } catch (error) {
+        console.error('Error fetching supplier data:', error);
       }
-    } catch (error) {
-      console.error("Error getting document:", error);
     }
-  }
 
-  // Fetch data and save to Firestore
-  getDataById();
-</script>
+    async function updateDataById() {
+      try {
+        const supplierRef = db.collection('suppliers').doc(supplierId);
+        const updatedData = {
+          status: 'Received',
+          warranty: '1 Year',
+          term: 'Net 30 Days',
+          price: '$1000',
+        };
+        await supplierRef.update(updatedData);
+        console.log('Supplier data updated successfully!');
+      } catch (error) {
+        console.error('Error updating supplier data:', error);
+      }
+    }
 
+    window.onload = async () => {
+      await getDataById();
+      await updateDataById();
+    };
+  </script>
 </body>
 </html>
