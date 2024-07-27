@@ -76,22 +76,29 @@
     button:hover {
       background-color: #0056b3;
     }
+    .static-field {
+      background-color: #e9ecef;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
   <div class="container" id="container">
     <form id="productForm">
       <div class="form-group">
-        <label for="brand">Brand</label>
-        <input type="text" id="brand" name="brand" required>
-      </div>
-      <div class="form-group">
         <label for="product">Product</label>
-        <input type="text" id="product" name="product" required>
+        <div id="product" class="static-field"></div>
       </div>
       <div class="form-group">
         <label for="productCode">Product Code</label>
-        <input type="text" id="productCode" name="productCode" required>
+        <div id="productCode" class="static-field"></div>
+      </div>
+      <div class="form-group">
+        <label for="brand">Brand</label>
+        <input type="text" id="brand" name="brand" required>
       </div>
       <div class="form-group">
         <label for="status">Status</label>
@@ -120,6 +127,8 @@
     const queryParams = new URLSearchParams(url.search);
     const supplierId = queryParams.get('supp_id');
     const requestId = queryParams.get('req_id');
+    const product = queryParams.get('product');
+    const productCode = queryParams.get('product_code');
 
     const firebaseConfig = {
       apiKey: "AIzaSyBlcn_SJcXY8Dh2hpgfAzUrcD9ShQfZ5Ts",
@@ -141,8 +150,6 @@
 
       const formData = new FormData(event.target);
       const brand = formData.get('brand');
-      const product = formData.get('product');
-      const productCode = formData.get('productCode');
       const status = formData.get('status');
       const warranty = formData.get('warranty');
       const term = formData.get('term');
@@ -151,9 +158,9 @@
       try {
         const supplierRef = db.collection('suppliers').doc(supplierId);
         await supplierRef.update({
-          brand,
           product,
           productCode,
+          brand,
           status,
           warranty,
           term,
@@ -175,9 +182,9 @@
         const supplierDoc = await db.collection('suppliers').doc(supplierId).get();
         if (supplierDoc.exists) {
           const supplierData = supplierDoc.data();
+          document.getElementById('product').innerText = product || supplierData.product || '';
+          document.getElementById('productCode').innerText = productCode || supplierData.productCode || '';
           document.getElementById('brand').value = supplierData.brand || '';
-          document.getElementById('product').value = supplierData.product || '';
-          document.getElementById('productCode').value = supplierData.productCode || '';
           document.getElementById('status').value = supplierData.status || '';
           document.getElementById('warranty').value = supplierData.warranty || '';
           document.getElementById('term').value = supplierData.term || '';
