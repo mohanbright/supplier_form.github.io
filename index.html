@@ -108,6 +108,7 @@
       cursor: pointer;
       border-radius: 4px;
       transition: background-color 0.3s, box-shadow 0.3s;
+      margin-top: 20px; /* Space above the button */
     }
     .form-group input[type="submit"]:hover {
       background-color: #0056b3;
@@ -121,7 +122,7 @@
       <h1>Product Information</h1>
     </div>
     <div class="loader" id="loader"></div>
-    <div class="message success hidden" id="data">Your request was sent successfully!</div>
+    <div class="message success hidden" id="data"></div>
     <div class="message error hidden" id="error"></div>
     <form id="dataForm">
       <div class="form-group">
@@ -219,56 +220,45 @@
           .where('requestId', '==', requestId)
           .where('supplierId', '==', supplierId)
           .get();
-
+        
         if (!existingResponse.empty) {
-          document.getElementById('loader').style.display = 'none';
-          document.getElementById('data').classList.add('hidden');
-          document.getElementById('error').textContent = 'You have already sent the request.';
-          document.getElementById('error').classList.remove('hidden');
-          return;
-        }
-
-        // Fetch supplier document from Firestore
-        const supplierDoc = await db.collection('suppliers').doc(supplierId).get();
-
-        if (supplierDoc.exists) {
-          // Get current date and time
-          const currentDate = new Date();
-          const formattedDate = currentDate.toISOString();
-          const data = {
-            productName: product,
+          // Update existing response
+          await db.collection('suppliers_reply').doc(existingResponse.docs[0].id).update({
+            product: product,
             productCode: productCode,
-            brandName: brand,
+            brand: brand,
+            status: status,
+            warranty: warranty,
+            term: term,
+            price: price
+          });
+        } else {
+          // Add new response
+          await db.collection('suppliers_reply').add({
+            product: product,
+            productCode: productCode,
+            brand: brand,
             status: status,
             warranty: warranty,
             term: term,
             price: price,
             requestId: requestId,
             supplierId: supplierId,
-            isAccepted: false,
-            supplier_country: supplierDoc.data().country,
-            supplier_email: supplierDoc.data().email,
-            supplier_name: supplierDoc.data().name,
-            date: formattedDate
-          };
-
-          // Add data to Firestore
-          await db.collection('suppliers_reply').add(data);
-          document.getElementById('loader').style.display = 'none';
-          document.getElementById('error').classList.add('hidden');
-          document.getElementById('data').classList.remove('hidden');
-        } else {
-          document.getElementById('loader').style.display = 'none';
-          document.getElementById('data').classList.add('hidden');
-          document.getElementById('error').textContent = 'Supplier document not found.';
-          document.getElementById('error').classList.remove('hidden');
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          });
         }
-      } catch (error) {
-        console.error("Error getting document:", error);
+
+        // Hide loader and show success message
         document.getElementById('loader').style.display = 'none';
-        document.getElementById('data').classList.add('hidden');
-        document.getElementById('error').textContent = 'An error occurred. Please try again.';
+        document.getElementById('data').textContent = 'Your data has been submitted successfully!';
+        document.getElementById('data').classList.remove('hidden');
+        document.getElementById('error').classList.add('hidden');
+      } catch (error) {
+        console.error('Error submitting data:', error);
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('error').textContent = 'There was an error submitting your data. Please try again.';
         document.getElementById('error').classList.remove('hidden');
+        document.getElementById('data').classList.add('hidden');
       }
     });
   </script>
