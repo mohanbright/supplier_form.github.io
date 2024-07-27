@@ -38,113 +38,123 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-    .message {
-      font-size: 20px;
-      color: green;
-      margin-top: 20px;
-    }
     .data {
       color: #27ae60; 
       font-size: 16px;
       font-weight: bold;
     }
+    .form-group {
+      margin: 15px 0;
+      text-align: left;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .form-group button {
+      padding: 10px 20px;
+      font-size: 16px;
+      color: #fff;
+      background-color: #007bff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .form-group button:hover {
+      background-color: #0056b3;
+    }
   </style>
 </head>
 <body>
-  <div class="container" id="container">
-    <div class="loader" id="loader"></div>
-    <div class="data" id="data" style="display:none;">
-      Your request was submitted successfully!
+    <div class="container" id="container">
+        <div class="loader" id="loader"></div>
+        <div class="data" id="data" style="display:none;">Your request was sent successfully!</div>
+        
+        <form id="productForm">
+          <div class="form-group">
+            <label for="supplierId">Supplier ID</label>
+            <input type="text" id="supplierId" name="supplierId" required>
+          </div>
+          <div class="form-group">
+            <label for="requestId">Request ID</label>
+            <input type="text" id="requestId" name="requestId" required>
+          </div>
+          <div class="form-group">
+            <label for="supplierAddress">Supplier Address</label>
+            <input type="text" id="supplierAddress" name="supplierAddress" required>
+          </div>
+          <div class="form-group">
+            <label for="product">Product</label>
+            <input type="text" id="product" name="product" required>
+          </div>
+          <div class="form-group">
+            <label for="productCode">Product Code</label>
+            <input type="text" id="productCode" name="productCode" required>
+          </div>
+          <div class="form-group">
+            <button type="submit">Submit</button>
+          </div>
+        </form>
     </div>
-  </div>
 
-  <script>
-    setTimeout(() => {
-      document.getElementById('loader').style.display = 'none';
-      document.getElementById('data').style.display = 'block';
-    }, 2000);
+    <script>
+        // Firebase Configuration and Initialization
+        const firebaseConfig = {
+          apiKey: "AIzaSyBlcn_SJcXY8Dh2hpgfAzUrcD9ShQfZ5Ts",
+          authDomain: "quickmro.firebaseapp.com",
+          projectId: "quickmro",
+          storageBucket: "quickmro.appspot.com",
+          messagingSenderId: "851884870059",
+          appId: "1:851884870059:web:e45530dedda5cf5ddd6aee",
+          measurementId: "G-K08BV1Z7KY"
+        };
 
-    // Firebase Configuration and Initialization
-    const firebaseConfig = {
-      apiKey: "AIzaSyBlcn_SJcXY8Dh2hpgfAzUrcD9ShQfZ5Ts",
-      authDomain: "quickmro.firebaseapp.com",
-      projectId: "quickmro",
-      storageBucket: "quickmro.appspot.com",
-      messagingSenderId: "851884870059",
-      appId: "1:851884870059:web:e45530dedda5cf5ddd6aee",
-      measurementId: "G-K08BV1Z7KY"
-    };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+        async function handleSubmit(event) {
+          event.preventDefault(); // Prevent default form submission
 
-    async function getDataById() {
-      try {
-        // Extract query parameters
-        const url = new URL(window.location.href);
-        const queryParams = new URLSearchParams(url.search);
+          try {
+            // Extract form values
+            const supplierId = document.getElementById('supplierId').value;
+            const requestId = document.getElementById('requestId').value;
+            const supplierAddress = document.getElementById('supplierAddress').value;
+            const product = document.getElementById('product').value;
+            const productCode = document.getElementById('productCode').value;
+            const supplierRef = db.collection('suppliers_reply').doc(supplierId);
 
-        const supplierId = queryParams.get('supp_id');
-        const requestId = queryParams.get('req_id');
-        const brand = queryParams.get('brand');
-        const product = queryParams.get('product');
-        const productCode = queryParams.get('product_code');
-        const status = queryParams.get('status');
-        const warranty = queryParams.get('warranty');
-        const term = queryParams.get('term');
-        const price = queryParams.get('price');
-        const totalPrice = queryParams.get('totalPrice');
-        const supplierName = queryParams.get('supplier_name');
-        const supplierEmail = queryParams.get('supplier_email');
-        const supplierCountry = queryParams.get('supplier_country');
-        const isAccepted = queryParams.get('isAccepted') === 'true';
-        const isNew = queryParams.get('isNew') === 'true';
+            // Save supplier reply in Firestore
+            await supplierRef.set({
+              supplier_id: supplierId,
+              quotation_id: requestId,
+              supplier_address: supplierAddress,
+              product: product,
+              product_code: productCode,
+              created_at: firebase.firestore.FieldValue.serverTimestamp(),
+              updated_at: firebase.firestore.FieldValue.serverTimestamp()
+            });
 
-        // Fetch supplier document from Firestore
-        const supplierDoc = await db.collection('suppliers').doc(supplierId).get();
-
-        // Check if document exists
-        if (supplierDoc.exists) {
-          // Get current date and time
-          const currentDate = new Date();
-          const formattedDate = currentDate.toISOString();
-
-          const data = {
-            productName: product,
-            productCode: productCode,
-            brandName: brand,
-            status: status,
-            warranty: warranty,
-            term: term,
-            price: price,
-            totalPrice: totalPrice,
-            requestId: requestId,
-            supplierId: supplierId,
-            isAccepted: isAccepted,
-            isNew: isNew,
-            supplier_country: supplierCountry,
-            supplier_email: supplierEmail,
-            supplier_name: supplierName,
-            date: formattedDate
-          };
-
-          // Add data to Firestore
-          await db.collection('suppliers_reply').add(data);
-
-          // Display success message
-          document.getElementById('loader').style.display = 'none';
-          document.getElementById('data').style.display = 'block';
-        } else {
-          console.log('Supplier document not found');
+            // Hide loader and show success message
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('data').style.display = 'block';
+          } catch (error) {
+            console.error("Error saving document: ", error);
+            document.getElementById('loader').style.display = 'none';
+          }
         }
-      } catch (error) {
-        console.error("Error getting document:", error);
-      }
-    }
 
-    // Fetch data and save to Firestore
-    getDataById();
-  </script>
+        // Attach event listener to form
+        document.getElementById('productForm').addEventListener('submit', handleSubmit);
+    </script>
 </body>
 </html>
