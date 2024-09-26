@@ -5,90 +5,110 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
-  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
   <title>Product Information</title>
   <style>
-    /* CSS styles */
+    * {
+      box-sizing: border-box;
+    }
     body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
-        margin: 0;
-        padding: 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f7f6;
     }
-
     .container {
-        max-width: 600px;
-        margin: 0 auto;
-        background: #fff;
-        padding: 20px;
-        border-radius: 5px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
-
     .header {
-        text-align: center;
-        margin-bottom: 20px;
+      text-align: center;
+      margin-bottom: 20px;
     }
-
-    h1 {
-        color: #333;
+    .header h1 {
+      font-size: 24px;
+      color: #333;
     }
-
-    .form-group {
-        margin-bottom: 15px;
-    }
-
-    label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
-    }
-
-    input[type="text"],
-    input[type="number"],
-    select {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-sizing: border-box;
-    }
-
-    input[type="submit"] {
-        background-color: #28a745;
-        color: white;
-        padding: 10px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 16px;
-    }
-
-    input[type="submit"]:hover {
-        background-color: #218838;
-    }
-
     .loader {
-        display: none;
-        margin: 20px 0;
+      border: 16px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 16px solid #007bff;
+      width: 80px;
+      height: 80px;
+      animation: spin 1.5s linear infinite;
+      margin: 20px auto;
+      display: none; /* Hide loader initially */
     }
-
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
     .message {
-        margin: 20px 0;
-        padding: 10px;
-        border-radius: 4px;
+      font-size: 18px;
+      margin-top: 20px;
+      text-align: center;
     }
-
     .success {
-        background-color: #d4edda;
-        color: #155724;
-        border: 1px solid #c3e6cb;
+      color: #28a745;
     }
-
     .error {
-        background-color: #f8d7da;
-        color: #721c24;
-        border: 1px solid #f5c6cb;
+      color: #dc3545;
+    }
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #555;
+    }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+      background-color: #f9f9f9;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .form-group input:focus, .form-group select:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+      outline: none;
+    }
+    .form-group input[readonly] {
+      background-color: #e9ecef;
+      cursor: not-allowed;
+    }
+    .form-group select {
+      height: 50px; 
+      width: 100%; 
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+      background-color: #f9f9f9;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+  
+    .form-group input[type="submit"] {
+  background-color: #007bff;
+  color: #ffffff;
+  border: none;
+  padding: 12px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s, box-shadow 0.3s;
+  margin-top: 20px; 
+}
+
+    .form-group input[type="submit"]:hover {
+      background-color: #0056b3;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
   </style>
 </head>
@@ -134,10 +154,10 @@
       </div>
       <div class="form-group">
         <label for="price">Price</label>
-        <div style="display: flex; align-items: center;">
-          <input type="number" id="price" name="price" required min="0" step="0.01" style="flex: 1; padding-right: 10px;">
-          <span style="font-size: 16px;">€</span>
-        </div>
+           <div style="display: flex; align-items: center;">
+    <input type="number" id="price" name="price" required min="0" step="0.01" style="flex: 1; padding-right: 10px;">
+    <span style="font-size: 16px;">€</span>
+  </div>
       </div>
       <div class="form-group">
         <input type="submit" value="Submit">
@@ -162,14 +182,19 @@
 
     function populateForm() {
       const urlParams = new URLSearchParams(window.location.search);
-      document.getElementById('product').value = urlParams.get('product') || '';
-      document.getElementById('product_code').value = urlParams.get('product_code') || '';
+      const product = urlParams.get('product') || '';
+      const productCode = urlParams.get('product_code') || '';
+
+      document.getElementById('product').value = product;
+      document.getElementById('product_code').value = productCode;
+
     }
 
     window.onload = populateForm;
 
     document.getElementById('dataForm').addEventListener('submit', async (event) => {
       event.preventDefault();
+
       document.getElementById('loader').style.display = 'block';
 
       const product = document.getElementById('product').value;
@@ -179,8 +204,10 @@
       const warranty = document.getElementById('warranty').value;
       const term = document.getElementById('term').value;
       const price = document.getElementById('price').value;
-      const supplierId = new URLSearchParams(window.location.search).get('supp_id');
-      const requestId = new URLSearchParams(window.location.search).get('req_id');
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const supplierId = urlParams.get('supp_id');
+      const requestId = urlParams.get('req_id');
 
       try {
         const existingResponse = await db.collection('suppliers_reply')
@@ -195,6 +222,7 @@
           return;
         }
 
+        // Fetch supplier document from Firestore
         const supplierDoc = await db.collection('suppliers').doc(supplierId).get();
 
         if (supplierDoc.exists) {
@@ -217,26 +245,8 @@
             date: formattedDate
           };
 
+          // Add data to Firestore
           await db.collection('suppliers_reply').add(data);
-
-          // Send email notification via EmailJS
-          emailjs.init("qwJBJTeVpTNUsUoen"); // Initialize EmailJS
-
-          const emailParams = {
-            productName: product,
-            productCode: productCode,
-            brandName: brand,
-            status: status,
-            warranty: warranty,
-            term: term,
-            price: price,
-            requestId: requestId,
-            supplierId: supplierId
-          };
-
-          const response = await emailjs.send('service_ms1mrl8', 'template_fnxumki', emailParams);
-          console.log('Email sent successfully:', response.status);
-
           document.getElementById('loader').style.display = 'none';
           document.getElementById('success').style.display = 'block';
         } else {
@@ -245,9 +255,9 @@
           document.getElementById('error').style.display = 'block';
         }
       } catch (error) {
-        console.error("Error:", error);
+        console.error("Error getting document:", error);
         document.getElementById('loader').style.display = 'none';
-        document.getElementById('error').textContent = `An error occurred: ${error.message || error}`;
+        document.getElementById('error').textContent = 'An error occurred. Please try again.';
         document.getElementById('error').style.display = 'block';
       }
     });
