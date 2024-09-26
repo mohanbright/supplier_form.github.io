@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
   <title>Product Information</title>
   <style>
     * {
@@ -117,7 +118,7 @@
     <div class="header">
       <h1>Product Information</h1>
     </div>
-    <div class="loader" id="loader"></div>
+    <div class="loader" id="loader" style="display: none;"></div>
     <div class="message success" id="success" style="display: none;">
       Request sent successfully!
     </div>
@@ -154,10 +155,10 @@
       </div>
       <div class="form-group">
         <label for="price">Price</label>
-           <div style="display: flex; align-items: center;">
-    <input type="number" id="price" name="price" required min="0" step="0.01" style="flex: 1; padding-right: 10px;">
-    <span style="font-size: 16px;">€</span>
-  </div>
+        <div style="display: flex; align-items: center;">
+          <input type="number" id="price" name="price" required min="0" step="0.01" style="flex: 1; padding-right: 10px;">
+          <span style="font-size: 16px;">€</span>
+        </div>
       </div>
       <div class="form-group">
         <input type="submit" value="Submit">
@@ -182,19 +183,14 @@
 
     function populateForm() {
       const urlParams = new URLSearchParams(window.location.search);
-      const product = urlParams.get('product') || '';
-      const productCode = urlParams.get('product_code') || '';
-
-      document.getElementById('product').value = product;
-      document.getElementById('product_code').value = productCode;
-
+      document.getElementById('product').value = urlParams.get('product') || '';
+      document.getElementById('product_code').value = urlParams.get('product_code') || '';
     }
 
     window.onload = populateForm;
 
     document.getElementById('dataForm').addEventListener('submit', async (event) => {
       event.preventDefault();
-
       document.getElementById('loader').style.display = 'block';
 
       const product = document.getElementById('product').value;
@@ -204,10 +200,8 @@
       const warranty = document.getElementById('warranty').value;
       const term = document.getElementById('term').value;
       const price = document.getElementById('price').value;
-
-      const urlParams = new URLSearchParams(window.location.search);
-      const supplierId = urlParams.get('supp_id');
-      const requestId = urlParams.get('req_id');
+      const supplierId = new URLSearchParams(window.location.search).get('supp_id');
+      const requestId = new URLSearchParams(window.location.search).get('req_id');
 
       try {
         const existingResponse = await db.collection('suppliers_reply')
@@ -222,12 +216,9 @@
           return;
         }
 
-        // Fetch supplier document from Firestore
         const supplierDoc = await db.collection('suppliers').doc(supplierId).get();
 
         if (supplierDoc.exists) {
-          const currentDate = new Date();
-          const formattedDate = currentDate.toISOString();
           const data = {
             productName: product,
             productCode: productCode,
@@ -242,11 +233,29 @@
             supplier_country: supplierDoc.data().country,
             supplier_email: supplierDoc.data().email,
             supplier_name: supplierDoc.data().name,
-            date: formattedDate
+            date: new Date().toISOString()
           };
 
-          // Add data to Firestore
           await db.collection('suppliers_reply').add(data);
+
+          // Send email notification via EmailJS
+          emailjs.init("qwJBJTeVpTNUsUoen"); // Your EmailJS User ID
+
+          const emailParams = {
+            productName: product,
+            productCode: productCode,
+            brandName: brand,
+            status: status,
+            warranty: warranty,
+            term: term,
+            price: price,
+            requestId: requestId,
+            supplierId: supplierId
+          };
+
+          const response = await emailjs.send('service_ms1mrl8', 'template_fnxumki', emailParams);
+          console.log('Email sent successfully:', response.status);
+
           document.getElementById('loader').style.display = 'none';
           document.getElementById('success').style.display = 'block';
         } else {
@@ -255,7 +264,7 @@
           document.getElementById('error').style.display = 'block';
         }
       } catch (error) {
-        console.error("Error getting document:", error);
+        console.error("Error:", error);
         document.getElementById('loader').style.display = 'none';
         document.getElementById('error').textContent = 'An error occurred. Please try again.';
         document.getElementById('error').style.display = 'block';
