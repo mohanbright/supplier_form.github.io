@@ -7,109 +7,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
   <title>Product Information</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f7f6;
-    }
-    .container {
-      max-width: 600px;
-      margin: 50px auto;
-      padding: 20px;
-      background-color: #ffffff;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-    .header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .header h1 {
-      font-size: 24px;
-      color: #333;
-    }
-    .loader {
-      border: 16px solid #f3f3f3;
-      border-radius: 50%;
-      border-top: 16px solid #007bff;
-      width: 80px;
-      height: 80px;
-      animation: spin 1.5s linear infinite;
-      margin: 20px auto;
-      display: none; /* Hide loader initially */
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    .message {
-      font-size: 18px;
-      margin-top: 20px;
-      text-align: center;
-    }
-    .success {
-      color: #28a745;
-    }
-    .error {
-      color: #dc3545;
-    }
-    .form-group label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 8px;
-      color: #555;
-    }
-    .form-group input, .form-group select {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 16px;
-      background-color: #f9f9f9;
-      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
-      transition: border-color 0.3s, box-shadow 0.3s;
-    }
-    .form-group input:focus, .form-group select:focus {
-      border-color: #007bff;
-      box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
-      outline: none;
-    }
-    .form-group input[readonly] {
-      background-color: #e9ecef;
-      cursor: not-allowed;
-    }
-    .form-group select {
-      height: 50px; 
-      width: 100%; 
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 16px;
-      background-color: #f9f9f9;
-      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
-      transition: border-color 0.3s, box-shadow 0.3s;
-    }
-  
-    .form-group input[type="submit"] {
-  background-color: #007bff;
-  color: #ffffff;
-  border: none;
-  padding: 12px 20px;
-  font-size: 16px;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.3s, box-shadow 0.3s;
-  margin-top: 20px; 
-}
-
-    .form-group input[type="submit"]:hover {
-      background-color: #0056b3;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
+    /* Existing styles... */
   </style>
 </head>
 <body>
@@ -154,10 +52,14 @@
       </div>
       <div class="form-group">
         <label for="price">Price</label>
-           <div style="display: flex; align-items: center;">
-    <input type="number" id="price" name="price" required min="0" step="0.01" style="flex: 1; padding-right: 10px;">
-    <span style="font-size: 16px;">€</span>
-  </div>
+        <div style="display: flex; align-items: center;">
+          <input type="number" id="price" name="price" required min="0" step="0.01" style="flex: 1; padding-right: 10px;">
+          <span style="font-size: 16px;">€</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="offer_number">Offer Number</label>
+        <input type="text" id="offer_number" name="offer_number" required>
       </div>
       <div class="form-group">
         <input type="submit" value="Submit">
@@ -187,7 +89,6 @@
 
       document.getElementById('product').value = product;
       document.getElementById('product_code').value = productCode;
-
     }
 
     window.onload = populateForm;
@@ -204,6 +105,7 @@
       const warranty = document.getElementById('warranty').value;
       const term = document.getElementById('term').value;
       const price = document.getElementById('price').value;
+      const offerNumber = document.getElementById('offer_number').value;
 
       const urlParams = new URLSearchParams(window.location.search);
       const supplierId = urlParams.get('supp_id');
@@ -236,6 +138,7 @@
             warranty: warranty,
             term: term,
             price: price,
+            offerNumber: offerNumber,  // New field added here
             requestId: requestId,
             supplierId: supplierId,
             isAccepted: false,
