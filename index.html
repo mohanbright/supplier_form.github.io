@@ -41,7 +41,7 @@
       height: 80px;
       animation: spin 1.5s linear infinite;
       margin: 20px auto;
-      display: none; /* Hide loader initially */
+      display: none;
     }
     @keyframes spin {
       0% { transform: rotate(0deg); }
@@ -245,7 +245,7 @@
           await db.collection('suppliers_reply').add(data);
           
           // Send email after successful Firestore operation
-          sendEmail();
+          sendEmail(data);
 
           document.getElementById('loader').style.display = 'none';
           document.getElementById('success').style.display = 'block';
@@ -262,10 +262,21 @@
       }
     });
 
-    function sendEmail() {
-      const form = document.getElementById('dataForm');
+    function sendEmail(data) {
+      const templateParams = {
+        product: data.productName,
+        product_code: data.productCode,
+        brand: data.brandName,
+        status: data.status,
+        warranty: data.warranty,
+        term: data.term,
+        price: data.price,
+        offer_number: data.offerNumber,
+        requestId: data.requestId,
+        supplierId: data.supplierId,
+      };
 
-      emailjs.sendForm('service_ms1mrl8', 'template_fnxumki', form)
+      emailjs.send('service_ms1mrl8', 'template_fnxumki', templateParams)
         .then(function() {
           console.log('Email sent successfully!');
         }, function(error) {
