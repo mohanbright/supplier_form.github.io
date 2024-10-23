@@ -282,7 +282,7 @@
   console.log("Sending Email with data:", emailData);
 
   try {
-    await emailjs.sendFrom('service_ms1mrl8', 'template_fnxumki', emailData);
+    await emailjs.sendForm('service_ms1mrl8', 'template_fnxumki', emailData);
     alert('Email sent successfully!');
     console.log('Email sent successfully!');
   } catch (error) {
