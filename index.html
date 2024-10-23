@@ -5,8 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script> <!-- Add EmailJS -->
   <title>Product Information</title>
-   <style>
+  <style>
     * {
       box-sizing: border-box;
     }
@@ -78,34 +79,17 @@
       box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
       outline: none;
     }
-    .form-group input[readonly] {
-      background-color: #e9ecef;
-      cursor: not-allowed;
-    }
-    .form-group select {
-      height: 50px; 
-      width: 100%; 
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 16px;
-      background-color: #f9f9f9;
-      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
-      transition: border-color 0.3s, box-shadow 0.3s;
-    }
-  
     .form-group input[type="submit"] {
-  background-color: #007bff;
-  color: #ffffff;
-  border: none;
-  padding: 12px 20px;
-  font-size: 16px;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.3s, box-shadow 0.3s;
-  margin-top: 20px; 
-}
-
+      background-color: #007bff;
+      color: #ffffff;
+      border: none;
+      padding: 12px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background-color 0.3s, box-shadow 0.3s;
+      margin-top: 20px; 
+    }
     .form-group input[type="submit"]:hover {
       background-color: #0056b3;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -181,6 +165,7 @@
       measurementId: "G-K08BV1Z7KY"
     };
 
+    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
@@ -240,7 +225,7 @@
             warranty: warranty,
             term: term,
             price: price,
-            offerNumber: offerNumber,  // New field added here
+            offerNumber: offerNumber,
             requestId: requestId,
             supplierId: supplierId,
             isAccepted: false,
@@ -252,8 +237,31 @@
 
           // Add data to Firestore
           await db.collection('suppliers_reply').add(data);
-          document.getElementById('loader').style.display = 'none';
-          document.getElementById('success').style.display = 'block';
+
+          // Send email using EmailJS
+          const emailData = {
+            productName: product,
+            productCode: productCode,
+            brandName: brand,
+            status: status,
+            warranty: warranty,
+            term: term,
+            price: price,
+            requestId: requestId,
+            supplierId: supplierId
+          };
+
+          await emailjs.send('service_ms1mrl8', 'template_fnxumki', emailData)
+            .then(() => {
+              document.getElementById('loader').style.display = 'none';
+              document.getElementById('success').style.display = 'block';
+            })
+            .catch((error) => {
+              console.error("Email sending error:", error);
+              document.getElementById('loader').style.display = 'none';
+              document.getElementById('error').textContent = 'Failed to send email.';
+              document.getElementById('error').style.display = 'block';
+            });
         } else {
           document.getElementById('loader').style.display = 'none';
           document.getElementById('error').textContent = 'Supplier document not found.';
