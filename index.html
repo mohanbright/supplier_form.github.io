@@ -263,21 +263,19 @@
     });
 
 
-    function sendEmail() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const requestId = urlParams.get('req_id');
-  const supplierId = urlParams.get('supp_id');
-
+ function sendEmail() {
+  const form = document.getElementById('dataForm');
+  
   const emailData = {
-    product: document.getElementById('product').value,
-    product_code: document.getElementById('product_code').value,
-    brand: document.getElementById('brand').value,
-    status: document.getElementById('status').value,
-    warranty: document.getElementById('warranty').value,
-    term: document.getElementById('term').value,
-    price: document.getElementById('price').value,
-    requestId: requestId,
-    supplierId: supplierId
+    product: form.product.value,
+    product_code: form.product_code.value,
+    brand: form.brand.value,
+    status: form.status.value,
+    warranty: form.warranty.value,
+    term: form.term.value,
+    price: form.price.value,
+    requestId: new URLSearchParams(window.location.search).get('req_id'),
+    supplierId: new URLSearchParams(window.location.search).get('supp_id')
   };
 
   console.log("Sending Email with data:", emailData);
@@ -291,30 +289,6 @@
     });
 }
 
-    
-//     function sendEmail() {
-//   const form = document.getElementById('dataForm');
-  
-//   console.log("Sending Email with data:", {
-//     product: form.product.value,
-//     product_code: form.product_code.value,
-//     brand: form.brand.value,
-//     status: form.status.value,
-//     warranty: form.warranty.value,
-//     term: form.term.value,
-//     price: form.price.value,
-//     requestId: new URLSearchParams(window.location.search).get('req_id'),
-//     supplierId: new URLSearchParams(window.location.search).get('supp_id')
-//   });
-
-//   emailjs.sendForm('service_ms1mrl8', 'template_fnxumki', form)
-//     .then(function() {
-//       alert('Email sent successfully!');
-//       console.log('Email sent successfully!');
-//     }, function(error) {
-//       console.error('Failed to send email:', error);
-//     });
-// }
 
   </script>
 </body>
