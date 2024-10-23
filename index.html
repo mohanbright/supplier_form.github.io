@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
-  <script src="https://cdn.emailjs.com/dist/email.min.js"></script> <!-- Add EmailJS -->
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
   <title>Product Information</title>
   <style>
     * {
@@ -78,6 +78,10 @@
       border-color: #007bff;
       box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
       outline: none;
+    }
+    .form-group input[readonly] {
+      background-color: #e9ecef;
+      cursor: not-allowed;
     }
     .form-group input[type="submit"] {
       background-color: #007bff;
@@ -165,11 +169,13 @@
       measurementId: "G-K08BV1Z7KY"
     };
 
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-        emailjs.init("qwJBJTeVpTNUsUoen");
+    // EmailJS Initialization
+    (function(){
+      emailjs.init("qwJBJTeVpTNUsUoen"); // Your EmailJS user ID
+    })();
 
     function populateForm() {
       const urlParams = new URLSearchParams(window.location.search);
@@ -213,7 +219,6 @@
           return;
         }
 
-        // Fetch supplier document from Firestore
         const supplierDoc = await db.collection('suppliers').doc(supplierId).get();
 
         if (supplierDoc.exists) {
@@ -237,33 +242,13 @@
             date: formattedDate
           };
 
-          // Add data to Firestore
           await db.collection('suppliers_reply').add(data);
+          
+          // Send email after successful Firestore operation
+          sendEmail();
 
-          // Send email using EmailJS
-          const emailData = {
-            productName: product,
-            productCode: productCode,
-            brandName: brand,
-            status: status,
-            warranty: warranty,
-            term: term,
-            price: price,
-            requestId: requestId,
-            supplierId: supplierId
-          };
-
-          await emailjs.send('service_ms1mrl8', 'template_fnxumki', emailData)
-            .then(() => {
-              document.getElementById('loader').style.display = 'none';
-              document.getElementById('success').style.display = 'block';
-            })
-            .catch((error) => {
-              console.error("Email sending error:", error);
-              document.getElementById('loader').style.display = 'none';
-              document.getElementById('error').textContent = 'Failed to send email.';
-              document.getElementById('error').style.display = 'block';
-            });
+          document.getElementById('loader').style.display = 'none';
+          document.getElementById('success').style.display = 'block';
         } else {
           document.getElementById('loader').style.display = 'none';
           document.getElementById('error').textContent = 'Supplier document not found.';
@@ -276,6 +261,17 @@
         document.getElementById('error').style.display = 'block';
       }
     });
+
+    function sendEmail() {
+      const form = document.getElementById('dataForm');
+
+      emailjs.sendForm('service_ms1mrl8', 'template_fnxumki', form)
+        .then(function() {
+          console.log('Email sent successfully!');
+        }, function(error) {
+          console.error('Failed to send email:', error);
+        });
+    }
   </script>
 </body>
 </html>
