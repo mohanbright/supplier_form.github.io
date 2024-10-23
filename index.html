@@ -244,8 +244,7 @@
 
           await db.collection('suppliers_reply').add(data);
           
-          // Send email after successful Firestore operation
-          sendEmail(supplierDoc.data().email);
+          sendEmail();
 
           document.getElementById('loader').style.display = 'none';
           document.getElementById('success').style.display = 'block';
@@ -264,10 +263,9 @@
 
 
 
-    async function sendEmail(supplierEmail) {
+    async function sendEmail() {
   const form = document.getElementById('dataForm');
 
-      form.reply_to.value = supplierEmail;
   try {
     await emailjs.sendForm('service_ms1mrl8', 'template_fnxumki', form);
     alert('Email sent successfully!');
