@@ -263,28 +263,21 @@
     });
 
 
-   function sendEmail() {
+
+    async function sendEmail() {
   const form = document.getElementById('dataForm');
-  
-  console.log("Sending Email with data:", {
-    product: form.product.value,
-    product_code: form.product_code.value,
-    brand: form.brand.value,
-    status: form.status.value,
-    warranty: form.warranty.value,
-    term: form.term.value,
-    price: form.price.value,
-    requestId: new URLSearchParams(window.location.search).get('req_id'),
-    supplierId: new URLSearchParams(window.location.search).get('supp_id')
-  });
-  emailjs.sendForm('service_ms1mrl8', 'template_fnxumki', form)
-    .then(function() {
-      alert('Email sent successfully!');
-      console.log('Email sent successfully!');
-    }, function(error) {
-      console.error('Failed to send email:', error);
-    });
+
+  try {
+    await emailjs.sendForm('service_ms1mrl8', 'template_fnxumki', form);
+    alert('Email sent successfully!');
+    console.log('Email sent successfully!');
+  } catch (error) {
+    console.error('Failed to send email:', error);
+    document.getElementById('error').textContent = 'Failed to send email. Please check your configuration.';
+    document.getElementById('error').style.display = 'block';
+  }
 }
+
 
 
   </script>
