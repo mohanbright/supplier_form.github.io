@@ -1,163 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
-  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-  <title>Product Information</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f7f6;
-    }
-    .container {
-      max-width: 600px;
-      margin: 50px auto;
-      padding: 20px;
-      background-color: #ffffff;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-    .header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .header h1 {
-      font-size: 24px;
-      color: #333;
-    }
-    .loader {
-      border: 16px solid #f3f3f3;
-      border-radius: 50%;
-      border-top: 16px solid #007bff;
-      width: 80px;
-      height: 80px;
-      animation: spin 1.5s linear infinite;
-      margin: 20px auto;
-      display: none; /* Hide loader initially */
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    .message {
-      font-size: 18px;
-      margin-top: 20px;
-      text-align: center;
-    }
-    .success {
-      color: #28a745;
-    }
-    .error {
-      color: #dc3545;
-    }
-    .form-group label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 8px;
-      color: #555;
-    }
-    .form-group input, .form-group select {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 16px;
-      background-color: #f9f9f9;
-      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
-      transition: border-color 0.3s, box-shadow 0.3s;
-    }
-    .form-group input:focus, .form-group select:focus {
-      border-color: #007bff;
-      box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
-      outline: none;
-    }
-    .form-group input[readonly] {
-      background-color: #e9ecef;
-      cursor: not-allowed;
-    }
-    .form-group input[type="submit"] {
-      background-color: #007bff;
-      color: #ffffff;
-      border: none;
-      padding: 12px 20px;
-      font-size: 16px;
-      cursor: pointer;
-      border-radius: 4px;
-      transition: background-color 0.3s, box-shadow 0.3s;
-      margin-top: 20px; 
-    }
-    .form-group input[type="submit"]:hover {
-      background-color: #0056b3;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <title>Product Information</title>
+    <style>
+        * {
+          box-sizing: border-box;
+        }
+        body {
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          margin: 0;
+          padding: 0;
+          background-color: #f4f7f6;
+        }
+        .container {
+          max-width: 600px;
+          margin: 50px auto;
+          padding: 20px;
+          background-color: #ffffff;
+          border-radius: 8px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+          text-align: center;
+          margin-bottom: 20px;
+        }
+        .header h1 {
+          font-size: 24px;
+          color: #333;
+        }
+        .loader {
+          border: 16px solid #f3f3f3;
+          border-radius: 50%;
+          border-top: 16px solid #007bff;
+          width: 80px;
+          height: 80px;
+          animation: spin 1.5s linear infinite;
+          margin: 20px auto;
+          display: none; /* Hide loader initially */
+        }
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        .message {
+          font-size: 18px;
+          margin-top: 20px;
+          text-align: center;
+        }
+        .success {
+          color: #28a745;
+        }
+        .error {
+          color: #dc3545;
+        }
+        .form-group label {
+          display: block;
+          font-weight: 600;
+          margin-bottom: 8px;
+          color: #555;
+        }
+        .form-group input, .form-group select {
+          width: 100%;
+          padding: 10px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          font-size: 16px;
+          background-color: #f9f9f9;
+          box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+          transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus {
+          border-color: #007bff;
+          box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+          outline: none;
+        }
+        .form-group input[readonly] {
+          background-color: #e9ecef;
+          cursor: not-allowed;
+        }
+        .form-group input[type="submit"] {
+          background-color: #007bff;
+          color: #ffffff;
+          border: none;
+          padding: 12px 20px;
+          font-size: 16px;
+          cursor: pointer;
+          border-radius: 4px;
+          transition: background-color 0.3s, box-shadow 0.3s;
+          margin-top: 20px;
+        }
+        .form-group input[type="submit"]:hover {
+          background-color: #0056b3;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+    </style>
 </head>
 <body>
-  <div class="container" id="container">
+<div class="container" id="container">
     <div class="header">
-      <h1>Product Information</h1>
+        <h1>Product Information</h1>
     </div>
     <div class="loader" id="loader"></div>
     <div class="message success" id="success" style="display: none;">
-      Request sent successfully!
+        Request sent successfully!
     </div>
     <div class="message error" id="error" style="display: none;"></div>
     <form id="dataForm">
-      <div class="form-group">
-        <label for="product">Product Name</label>
-        <input type="text" id="product" name="product" readonly>
-      </div>
-      <div class="form-group">
-        <label for="product_code">Product Code</label>
-        <input type="text" id="product_code" name="product_code" readonly>
-      </div>
-      <div class="form-group">
-        <label for="brand">Brand</label>
-        <input type="text" id="brand" name="brand" required>
-      </div>
-      <div class="form-group">
-        <label for="status">Status</label>
-        <select id="status" name="status" required>
-          <option value="">Select status</option>
-          <option value="Refurbished">Refurbished</option>
-          <option value="New">New</option>
-          <option value="Used">Used</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="warranty">Warranty</label>
-        <input type="text" id="warranty" name="warranty" required>
-      </div>
-      <div class="form-group">
-        <label for="term">Delivery</label>
-        <input type="text" id="term" name="term" required>
-      </div>
-      <div class="form-group">
-        <label for="price">Price</label>
-        <div style="display: flex; align-items: center;">
-          <input type="number" id="price" name="price" required min="0" step="0.01" style="flex: 1; padding-right: 10px;">
-          <span style="font-size: 16px;">€</span>
+        <div class="form-group">
+            <label for="product">Product Name</label>
+            <input type="text" id="product" name="product" readonly>
         </div>
-      </div>
-      <div class="form-group">
-        <label for="offer_number">Offer Number</label>
-        <input type="text" id="offer_number" name="offer_number" required>
-      </div>
-      <div class="form-group">
-        <input type="submit" value="Submit">
-      </div>
+        <div class="form-group">
+            <label for="product_code">Product Code</label>
+            <input type="text" id="product_code" name="product_code" readonly>
+        </div>
+        <div class="form-group">
+            <label for="brand">Brand</label>
+            <input type="text" id="brand" name="brand" required>
+        </div>
+        <div class="form-group">
+            <label for="status">Status</label>
+            <select id="status" name="status" required>
+                <option value="">Select status</option>
+                <option value="Refurbished">Refurbished</option>
+                <option value="New">New</option>
+                <option value="Used">Used</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="warranty">Warranty</label>
+            <input type="text" id="warranty" name="warranty" required>
+        </div>
+        <div class="form-group">
+            <label for="term">Delivery</label>
+            <input type="text" id="term" name="term" required>
+        </div>
+        <div class="form-group">
+            <label for="price">Price</label>
+            <div style="display: flex; align-items: center;">
+                <input type="number" id="price" name="price" required min="0" step="0.01" style="flex: 1; padding-right: 10px;">
+                <span style="font-size: 16px;"> €</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="cashback">Cash Back (%)</label>
+            <div style="display: flex; align-items: center;">
+                <input
+                        type="number"
+                        id="cashback"
+                        name="cashback"
+                        required
+                        min="0"
+                        step="0.01"
+                        style="flex: 1; padding-right: 10px;"
+                        placeholder=""
+                >
+                <span style="font-size: 16px;"> %</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="offer_number">Offer Number</label>
+            <input type="text" id="offer_number" name="offer_number" required>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Submit">
+        </div>
     </form>
-  </div>
+</div>
 
-  <script>
+<script>
     // Firebase Configuration and Initialization
     const firebaseConfig = {
       apiKey: "AIzaSyBlcn_SJcXY8Dh2hpgfAzUrcD9ShQfZ5Ts",
@@ -200,6 +216,7 @@
       const warranty = document.getElementById('warranty').value;
       const term = document.getElementById('term').value;
       const price = document.getElementById('price').value;
+      const cashback = document.getElementById('cashback').value;
       const offerNumber = document.getElementById('offer_number').value;
 
       const urlParams = new URLSearchParams(window.location.search);
@@ -232,6 +249,7 @@
             warranty: warranty,
             term: term,
             price: price,
+            cashback: cashback, 
             offerNumber: offerNumber,
             requestId: requestId,
             supplierId: supplierId,
@@ -243,7 +261,7 @@
           };
 
           await db.collection('suppliers_reply').add(data);
-          
+
           sendEmail(supplierDoc.data().email);
 
           document.getElementById('loader').style.display = 'none';
@@ -266,7 +284,7 @@
     async function sendEmail(supplierEmail) {
   const form = document.getElementById('dataForm');
 
-        form.term.value = supplierEmail; 
+        form.term.value = supplierEmail;
 
 
   try {
@@ -280,6 +298,6 @@
 
 
 
-  </script>
+</script>
 </body>
 </html>
